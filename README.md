@@ -1,6 +1,4 @@
-# AI Real-time GYM Coach
-
-![Gym Coach Icon](https://img.icons8.com/ios-filled/50/000000/weightlifting.png)
+# 🏋️ AI Real-time GYM Coach
 
 A Streamlit web application that acts as a virtual gym coach, using your webcam to provide real-time feedback on your exercise form, count reps, and track your workout progress.
 
