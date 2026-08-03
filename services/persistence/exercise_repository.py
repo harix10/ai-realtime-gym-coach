@@ -6,7 +6,7 @@ _DB_PATH = str(Path(__file__).parent.parent.parent / "data.db")
 
 @st.cache_resource
 def _get_connection():
-    conn = sqlite3.connect(_DB_PATH, check_same_thred=False)
+    conn = sqlite3.connect(_DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -38,14 +38,14 @@ def get_user(username):
     conn = _get_connection()
 
     return conn.execute(""" 
-            SELECT * FROM users WHERE username = ?""", (username)).fetchone()
+            SELECT * FROM users WHERE username = ?""", (username,)).fetchone()
 
-def create_user():
+def create_user(username):
         conn = _get_connection()
 
         with conn:
             conn.execute("""
-                INSERT INTO users (username) VALUES (?)""", (username))
+                INSERT INTO users (username) VALUES (?)""", (username,))
 
             return get_user(username)
 
@@ -62,21 +62,21 @@ def add_exercise(user_id, exercise_name, reps, sets, time):
 
     with conn:
         existing = conn.execute(""" 
-            SELECT * FROM exercises WHERE user_id = ? AND exercise_name = ? AND Date('created_at') = Date('now')"""
+            SELECT * FROM exercise WHERE user_id = ? AND exercise_name = ? AND Date('created_at') = Date('now')"""
                     , (user_id, exercise_name)).fetchone()
 
         if existing:
             conn.execute(""" 
-            UPDATE exercises SET reps = reps + ?, sets = sets + ?, time = time + ? WHERE id = ?""", 
+            UPDATE exercise SET reps = reps + ?, sets = sets + ?, time = time + ? WHERE id = ?""", 
             (reps, sets, time, existing['id']))
 
         else:
             conn.execute(""" 
-            INSERT INTO exercises (user_id, exercise_name, sets, reps, time) VALUES (?, ?, ?, ?, ?)""", 
+            INSERT INTO exercise (user_id, exercise_name, sets, reps, time) VALUES (?, ?, ?, ?, ?)""", 
             (user_id, exercise_name, sets, reps, time))
 
 def get_users_exercises(user_id):
     conn = _get_connection()
 
     return conn.execute(""" 
-            SELECT * FROM exercises WHERE user_id = ?""", (user_id)).fetchall()
+            SELECT * FROM exercise WHERE user_id = ?""", (user_id,)).fetchall()

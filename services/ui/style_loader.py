@@ -2,7 +2,7 @@ import os
 import streamlit as st
 import streamlit.components.v1 as components
 import base64
- 
+
 
 def load_css(file_path):
     if os.path.exists(file_path):
