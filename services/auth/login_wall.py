@@ -1,4 +1,5 @@
 import streamlit as st
+from services.persistence.exercise_repository import get_or_create_user
 
 def render_login_wall():
     if st.session_state.get("user_id") is not None:
@@ -16,8 +17,10 @@ def render_login_wall():
             st.error("Name cannot be empty.")
             return False
 
-        st.session_state["username"] = username
-        st.session_state["user_id"] = "1"
+        user = get_or_create_user(username)
+
+        st.session_state["user_id"] = user["id"]
+        st.session_state["username"] = user["username"]
 
         st.rerun()
             
