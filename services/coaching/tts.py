@@ -1,26 +1,18 @@
-import pyttsx3
-import tempfile
-import os
+from io import BytesIO
+from gtts import gTTS
 
 class TextToSpeech:
-    def __init__(self):
-        self.engine = pyttsx3.init()
-        self.engine.setProperty("rate", 175)
+    def speak(self, text, lang="en"):
+        cleaned = (text or "").strip()
 
-    def speak(self, text):
-        if not text:
-            return None
+        if not cleaned:
+            return
+        
+        buffer = BytesIO()
 
-        path = None
-        try:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
-                path = tmp.name
+        gTTS(text=cleaned, lang=lang).write_to_fp(buffer)
 
-            self.engine.save_to_file(text, path)
-            self.engine.runAndWait()
+        buffer.seek(0)
 
-            with open(path, "rb") as f:
-                return f.read()
-        finally:
-            if path and os.path.exists(path):
-                os.remove(path)
+        return buffer.read()
+    

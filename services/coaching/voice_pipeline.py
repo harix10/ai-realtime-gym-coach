@@ -1,13 +1,10 @@
 import time
 import streamlit as st
-import base64
-
 class VoicePipeline:
     def __init__(self, llm, tts):
         self.llm = llm
         self.tts = tts
         self.last_spoken_at = 0
-        self.last_feedback = ""
 
     def _find_form_issue(self, exercise, metrics):
         if "issue" in metrics:
@@ -79,15 +76,9 @@ class VoicePipeline:
                 return None
             
         text = self.llm.give_feedback(event, issue)
-
-# Prevent repeating the same feedback too often
-        if text == self.last_feedback and now - self.last_spoken_at < 15:
-            return None
-
         voice = self.tts.speak(text)
 
         self.last_spoken_at = now
-        self.last_feedback = text
 
         return voice, text
     
@@ -96,10 +87,6 @@ def autoplay_audio(audio_bytes):
     if not audio_bytes:
         return
     
-    b64 = base64.b64encode(audio_bytes).decode()
-    md = f"""
-        <audio autoplay="true">
-        <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-        </audio>
-        """
-    st.markdown(md, unsafe_allow_html=True)
+    st.markdown("<style>[data-testid='stAudio'] {display: none;}</style>", unsafe_allow_html=True)
+    
+    st.audio(audio_bytes, format="audio/mp3", autoplay=True)
