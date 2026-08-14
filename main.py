@@ -4,8 +4,8 @@ import time
 from dotenv import load_dotenv
 import pandas as pd
 from services.auth.login_wall import render_login_wall
-from services.state.session_default import initial_session_defaults
-from services.config.workout_config import EXERCISE_OPTIONS
+from services.state.session_default import initial_session_defaults 
+from services.config.workout_config import EXERCISE_OPTIONS, METRICS_FIELDS
 from services.ui.style_loader import load_css, inject_local_font, inject_webrtc_styles
 from services.persistence.exercise_repository import init_db
 from streamlit_webrtc import webrtc_streamer, WebRtcMode
@@ -138,41 +138,20 @@ def main():
 
             st.divider()
 
-            if exercise == "Squats":
-                st.subheader("Squat Metrics")
-                st.metric("Knee Angle", f"{st.session_state.knee_angle}°")
-                st.metric("Back Angle", f"{st.session_state.back_angle}°")
-                st.metric("Depth Status", st.session_state.depth_status)
-
-            elif exercise == "Push-ups":
-                st.subheader("Push-up Metrics")
-                st.metric("Elbow Angle", f"{st.session_state.elbow_angle}°")
-                st.metric("Body Alignment", st.session_state.body_alignment)
-                st.metric("Hip Position", st.session_state.hip_status)
-
-            elif exercise == "Biceps Curls (Dumbbell)":
-                st.subheader("Curl Metrics")
-                st.metric("Elbow Angle", f"{st.session_state.elbow_angle}°")
-                st.metric("Shoulder Stability", st.session_state.shoulder_status)
-                st.metric("Swing Detection", st.session_state.swing_status)
-
-            elif exercise == "Shoulder Press":
-                st.subheader("Shoulder Press Metrics")
-                st.metric("Elbow Angle", f"{st.session_state.elbow_angle}°")
-                st.metric("Arm Extension", st.session_state.extension_status)
-                st.metric("Back Arch", st.session_state.back_arch_status)
-
-            elif exercise == "Lunges":
-                st.subheader("Lunge Metrics")
-                st.metric("Front Knee Angle", f"{st.session_state.front_knee_angle}°")
-                st.metric("Torso Angle", f"{st.session_state.torso_angle}°")
-                st.metric("Balance Status", st.session_state.balance_status)
+            if exercise in METRICS_FIELDS:
+                st.subheader(f"{exercise} Metrics")
+                for key in METRICS_FIELDS[exercise]:
+                    label = key.replace('_', ' ').title()
+                    value = st.session_state.get(key, "N/A")
+                    unit = "°" if "angle" in key else ""
+                    st.metric(label, f"{value}{unit}")
 
     st.title("AI Real-time GYM Coach")
     st.markdown("#### Real-time pose detection with proactive AI voice coaching")
  
     if st.session_state.get("audio_to_play"):
         autoplay_audio(st.session_state.audio_to_play)
+        st.session_state.audio_to_play = None
 
     if st.session_state.get("coach_feedback"):
         st.markdown("")
@@ -249,8 +228,13 @@ def main():
                 "Sets": "sum",
                 "Time (sec)": "sum"
             }).reset_index()
+
+            agg_df = agg_df.sort_values(by="Date", ascending=False)
+
             agg_df.index += 1
-            st.table(agg_df, border="horizontal")
+
+            st.dataframe(agg_df, use_container_width=True, hide_index=True)
+
         else:
             st.info("No workout history found.")
 

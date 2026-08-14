@@ -37,7 +37,7 @@ class VideoProcessorClass(VideoProcessorBase):
         self._detectors = {
             "Squats": SquatDetector(),
             "Push-ups": PushUpDetector(),
-            "Biceps Curl (Dumbell)": BicepsCurlDetector(),
+            "Biceps Curls (Dumbbell)": BicepsCurlDetector(),
             "Shoulder Press": ShoulderPressDetector(),
             "Lunges": LungesDetector()
         }
@@ -204,7 +204,7 @@ class VideoProcessorClass(VideoProcessorBase):
 
             self._draw_skeleton(image, landmarks)
 
-            ex_type = self.get_exercise()
+            ex_type = self.get_exercise_type()
 
             detector = self._detectors.get(ex_type)
 
