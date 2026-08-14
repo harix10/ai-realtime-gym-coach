@@ -77,6 +77,14 @@ Make sure you have Python 3.8+ installed.
     cd AI-REALTIME-GYM-COACH
     ```
 
+2.  **Set up environment variables:**
+    Create a file named `.env` in the root of the project and add your API keys.
+    ```
+    # .env
+    GROQ_API_KEY="your_groq_api_key_here"
+    ```
+    This file is ignored by Git to keep your secrets safe.
+
 2.  **Install the required packages:**
     *(Assuming a `requirements.txt` file exists or will be created)*
     ```sh
