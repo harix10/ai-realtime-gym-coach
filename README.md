@@ -78,12 +78,27 @@ Make sure you have Python 3.8+ installed.
     ```
 
 2.  **Install the required packages:**
-    *(Assuming a `requirements.txt` file exists or will be created)*
     ```sh
     pip install -r requirements.txt
     ```
 
-3.  **Run the Streamlit application:**
+3. **Configure API keys (optional for voice):** Create a `.env` file in the
+   project root. Groq powers coaching text; OpenAI provides the preferred,
+   configurable speech model when an API key is available.
+
+    ```env
+    GROQ_API_KEY=your_groq_key
+    OPENAI_API_KEY=your_openai_key
+    # Optional OpenAI TTS settings
+    OPENAI_TTS_MODEL=gpt-4o-mini-tts
+    OPENAI_TTS_VOICE=alloy
+    ```
+
+   If `OPENAI_API_KEY` is absent or the OpenAI request fails, the app falls
+   back to Google TTS automatically. Google TTS has no model identifier to
+   configure.
+
+4.  **Run the Streamlit application:**
     ```sh
     streamlit run main.py
     ```

@@ -47,7 +47,11 @@ def main():
             
             groq_client = Groq(api_key=api_key)
             llm_coach = LLMCoach(groq_client)
-            tts = TextToSpeech()
+            openai_api_key = os.environ.get("OPENAI_API_KEY", "")
+            if not openai_api_key and hasattr(st, "secrets") and "OPENAI_API_KEY" in st.secrets:
+                openai_api_key = st.secrets["OPENAI_API_KEY"]
+
+            tts = TextToSpeech(api_key=openai_api_key)
             st.session_state.voice_pipeline = VoicePipeline(llm_coach, tts)
         except Exception as e:
             st.session_state.voice_pipeline = None
