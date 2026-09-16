@@ -12,17 +12,14 @@ from streamlit_webrtc import webrtc_streamer, WebRtcMode
 from services.vision.exercise_video_processor import VideoProcessorClass
 from services.tracking.metrics import sync_metrics_update
 from services.persistence.exercise_repository import get_users_exercises
-from groq import Groq
-from services.coaching.llm import LLMCoach
-from services.coaching.tts import TextToSpeech
-from services.coaching.voice_pipeline import VoicePipeline, autoplay_audio
+from services.coaching.voice_pipeline import VoicePipeline
 
 
 def main():
     load_dotenv()
 
     st.set_page_config(
-        page_icon="🏋️‍♀️",
+        page_icon="⚡",
         page_title="AI Real-time GYM Coach",
         initial_sidebar_state="expanded",
         layout="centered"
@@ -39,30 +36,39 @@ def main():
     initial_session_defaults()
 
     if "voice_pipeline" not in st.session_state:
-        try:
-            api_key = os.environ.get("GROQ_API_KEY", "")
-
-            if not api_key and hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
-                api_key = st.secrets["GROQ_API_KEY"]
-            
-            groq_client = Groq(api_key=api_key)
-            llm_coach = LLMCoach(groq_client)
-            openai_api_key = os.environ.get("OPENAI_API_KEY", "")
-            if not openai_api_key and hasattr(st, "secrets") and "OPENAI_API_KEY" in st.secrets:
-                openai_api_key = st.secrets["OPENAI_API_KEY"]
-
-            tts = TextToSpeech(api_key=openai_api_key)
-            st.session_state.voice_pipeline = VoicePipeline(llm_coach, tts)
-        except Exception as e:
-            st.session_state.voice_pipeline = None
+        st.session_state.voice_pipeline = VoicePipeline()
 
     workout_started = st.session_state.get("workout_started", False)
     
     with st.sidebar:
-        st.title("🏋️‍♂️ Apna AI Coach")
+        st.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.4 14.4 9.6 9.6"/>
+                    <path d="M18.65 21.35a2 2 0 0 1-2.83 0l-7.17-7.18a2 2 0 0 1 0-2.83l.53-.53"/>
+                    <path d="M21.5 18.5a2 2 0 0 1-2.83 0l-3.54-3.54a2 2 0 0 1 0-2.83l.54-.53"/>
+                    <path d="M5.35 2.65a2 2 0 0 1 2.83 0l7.17 7.18a2 2 0 0 1 0 2.83l-.53.53"/>
+                    <path d="M2.5 5.5a2 2 0 0 1 2.83 0l3.54 3.54a2 2 0 0 1 0 2.83l-.54.53"/>
+                </svg>
+                <h1 style="margin: 0; padding: 0; font-size: 1.75rem; font-weight: 700;">FormAI</h1>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 
         if st.session_state.username:
-            st.caption(f"👤 Login as {st.session_state.username}")
+            st.markdown(
+                f"""
+                <div style="display: flex; align-items: center; gap: 8px; color: #94a3b8; font-size: 0.95rem; margin-bottom: 1rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span>Logged in as {st.session_state.username}</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         st.divider()
 
@@ -154,28 +160,34 @@ def main():
     st.markdown("#### Real-time pose detection with proactive AI voice coaching")
  
     if st.session_state.get("audio_to_play"):
-        autoplay_audio(st.session_state.audio_to_play)
         st.session_state.audio_to_play = None
 
     if st.session_state.get("coach_feedback"):
         st.markdown("")
-        st.success(f"🤖 **Coach:** {st.session_state.coach_feedback}")
+        st.markdown(
+            f"""
+            <div style="display: flex; align-items: center; gap: 12px; background: rgba(0, 210, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.3); padding: 1rem 1.5rem; border-radius: 12px; color: #e2e8f0; margin-bottom: 1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>
+                </svg>
+                <span><strong>Coach:</strong> {st.session_state.coach_feedback}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     if not workout_started:
         st.markdown(
             """
-            <div style="
-                border: 10px dashed #444;
-                border-radius: 0px;
-                padding: 48px 32px;
-                text-align: center;
-                color: #888;
-                margin-top: 32px;
-                margin-bottom: 32px;
-            ">
-                <h2 style="color:#ccc; margin-bottom:8px;">👈 Set your workout plan</h2>
-                <p style="font-size:1.05rem;">
-                    Choose your exercise, sets and reps in the sidebar,<br>
+            <div class="premium-placeholder">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.48 12H2"/>
+                    </svg>
+                    <h2 style="margin: 0;">Set your workout plan</h2>
+                </div>
+                <p>
+                    Choose your exercise, sets, and reps in the sidebar,<br>
                     then click <strong>Start Workout</strong> to activate the camera and AI coach.
                 </p>
             </div>

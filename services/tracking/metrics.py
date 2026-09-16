@@ -18,7 +18,7 @@ def sync_metrics_update(context):
     if not exercise:
         return
     
-    processor.set_exercise(exercise)
+    processor.set_exercise_type(exercise)
     latest_metrics = processor.get_latest_metrics()
 
     if not latest_metrics:

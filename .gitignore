@@ -4,6 +4,7 @@
 # Python virtual environment
 venv/
 *.venv
+.venv_gym/
 
 # Python cache
 __pycache__/

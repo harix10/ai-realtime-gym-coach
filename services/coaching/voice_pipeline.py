@@ -1,9 +1,7 @@
 import time
 import streamlit as st
 class VoicePipeline:
-    def __init__(self, llm, tts):
-        self.llm = llm
-        self.tts = tts
+    def __init__(self):
         self.last_spoken_at = 0
 
     def _find_form_issue(self, exercise, metrics):
@@ -68,25 +66,23 @@ class VoicePipeline:
 
         is_major_issue = event in ["workout_started", "set_completed", "workout_completed"]
 
+        text = None
         if not is_major_issue:
             if not issue:
                 return None
             
             if now - self.last_spoken_at < 5:
                 return None
-            
-        text = self.llm.give_feedback(event, issue)
-        voice = self.tts.speak(text)
+                
+            text = issue
+        else:
+            if event == "workout_started":
+                text = f"Workout started for {exercise}. Let's go!"
+            elif event == "set_completed":
+                text = "Great job! Set completed."
+            elif event == "workout_completed":
+                text = "Workout complete. Well done!"
 
         self.last_spoken_at = now
 
-        return voice, text
-    
-
-def autoplay_audio(audio_bytes):
-    if not audio_bytes:
-        return
-    
-    st.markdown("<style>[data-testid='stAudio'] {display: none;}</style>", unsafe_allow_html=True)
-    
-    st.audio(audio_bytes, format="audio/mp3", autoplay=True)
+        return None, text
