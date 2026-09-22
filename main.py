@@ -14,6 +14,8 @@ from services.vision.exercise_video_processor import VideoProcessorClass
 from services.tracking.metrics import sync_metrics_update
 from services.persistence.exercise_repository import get_users_exercises
 from services.coaching.voice_pipeline import VoicePipeline
+from twilio.rest import Client
+import os
 
 
 def main():
@@ -201,11 +203,24 @@ def main():
             unsafe_allow_html=True,
         )
     else:
+        # Get ICE servers (STUN/TURN)
+        def get_ice_servers():
+            try:
+                account_sid = os.environ.get("TWILIO_ACCOUNT_SID") or st.secrets.get("TWILIO_ACCOUNT_SID")
+                auth_token = os.environ.get("TWILIO_AUTH_TOKEN") or st.secrets.get("TWILIO_AUTH_TOKEN")
+                if account_sid and auth_token:
+                    client = Client(account_sid, auth_token)
+                    token = client.tokens.create()
+                    return token.ice_servers
+            except Exception:
+                pass
+            return [{"urls": ["stun:stun.l.google.com:19302"]}]
+
         context = webrtc_streamer(
             key="exercise-analysis",
             mode=WebRtcMode.SENDRECV,
             video_processor_factory=VideoProcessorClass,
-            rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+            rtc_configuration={"iceServers": get_ice_servers()},
             media_stream_constraints={
                 "video": True,
                 "audio": False
