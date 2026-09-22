@@ -1,4 +1,4 @@
-# 🏋️ AI Real-time GYM Coach
+# 🏋️ FormAI
 
 A Streamlit web application that acts as a virtual gym coach, using your webcam to provide real-time feedback on your exercise form, count reps, and track your workout progress.
 
@@ -84,21 +84,9 @@ Make sure you have Python 3.8+ installed.
     pip install -r requirements.txt
     ```
 
-3. **Configure API keys (optional for voice):** Create a `.env` file in the
-   project root. Groq powers coaching text; OpenAI provides the preferred,
-   configurable speech model when an API key is available.
-
-    ```env
-    GROQ_API_KEY=your_groq_key
-    OPENAI_API_KEY=your_openai_key
-    # Optional OpenAI TTS settings
-    OPENAI_TTS_MODEL=gpt-4o-mini-tts
-    OPENAI_TTS_VOICE=alloy
-    ```
-
-   If `OPENAI_API_KEY` is absent or the OpenAI request fails, the app falls
-   back to Google TTS automatically. Google TTS has no model identifier to
-   configure.
+3.  **Configure API keys:**
+    No API keys are required for local usage. The app uses built-in or free text-to-speech by default.
+    If deploying to Streamlit Cloud, you will need to add Twilio credentials to Streamlit Secrets to ensure reliable video streaming.
 
 4.  **Run the Streamlit application:**
     ```sh
