@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import time
+import base64
 from dotenv import load_dotenv
 import pandas as pd
 from services.auth.login_wall import render_login_wall
@@ -19,12 +20,13 @@ def main():
     load_dotenv()
 
     st.set_page_config(
-        page_icon="⚡",
-        page_title="AI Real-time GYM Coach",
+        page_icon="🏋️",
+        page_title="FormAI",
         initial_sidebar_state="expanded",
         layout="centered"
     )
 
+    st.markdown("<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'>", unsafe_allow_html=True)
     load_css(os.path.join(os.getcwd(), "static", "style.css"))
     inject_local_font(os.path.join(os.getcwd(), "static", "AdobeClean.otf"), "AdobeClean")
 
@@ -44,13 +46,7 @@ def main():
         st.markdown(
             """
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14.4 14.4 9.6 9.6"/>
-                    <path d="M18.65 21.35a2 2 0 0 1-2.83 0l-7.17-7.18a2 2 0 0 1 0-2.83l.53-.53"/>
-                    <path d="M21.5 18.5a2 2 0 0 1-2.83 0l-3.54-3.54a2 2 0 0 1 0-2.83l.54-.53"/>
-                    <path d="M5.35 2.65a2 2 0 0 1 2.83 0l7.17 7.18a2 2 0 0 1 0 2.83l-.53.53"/>
-                    <path d="M2.5 5.5a2 2 0 0 1 2.83 0l3.54 3.54a2 2 0 0 1 0 2.83l-.54.53"/>
-                </svg>
+                <svg width="28" height="28" viewBox="0 0 640 512" fill="#00d2ff"><path d="M96 64c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 160 0 64 0 160c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-64-32 0c-17.7 0-32-14.3-32-32l0-64c-17.7 0-32-14.3-32-32s14.3-32 32-32l0-64c0-17.7 14.3-32 32-32l32 0 0-64zm448 0l0 64 32 0c17.7 0 32 14.3 32 32l0 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 64c0 17.7-14.3 32-32 32l-32 0 0 64c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-160 0-64 0-160c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32zM416 224l0 64-192 0 0-64 192 0z"/></svg>
                 <h1 style="margin: 0; padding: 0; font-size: 1.75rem; font-weight: 700;">FormAI</h1>
             </div>
             """, 
@@ -60,7 +56,7 @@ def main():
         if st.session_state.username:
             st.markdown(
                 f"""
-                <div style="display: flex; align-items: center; gap: 8px; color: #94a3b8; font-size: 0.95rem; margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; gap: 8px; color: #94a3b8; font-size: 0.95rem; margin-bottom: 0.5rem;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                     </svg>
@@ -69,6 +65,9 @@ def main():
                 """,
                 unsafe_allow_html=True
             )
+            if st.button("Logout", key="logout_btn", help="Click to log out of your session"):
+                st.session_state.clear()
+                st.rerun()
 
         st.divider()
 
@@ -156,8 +155,10 @@ def main():
                     unit = "°" if "angle" in key else ""
                     st.metric(label, f"{value}{unit}")
 
-    st.title("AI Real-time GYM Coach")
-    st.markdown("#### Real-time pose detection with proactive AI voice coaching")
+    username = st.session_state.username if st.session_state.username else "User"
+    st.markdown(f"<h1 style='margin-bottom: 0.2rem; font-size: 2.2rem;'>Welcome, {username}! Prepare your session with FormAI.</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #94a3b8; font-weight: 400; margin-top: 0; font-size: 1.2rem;'>Set Your Workout Plan in the Sidebar</h3>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
  
     if st.session_state.get("audio_to_play"):
         st.session_state.audio_to_play = None
@@ -177,19 +178,24 @@ def main():
         )
 
     if not workout_started:
+        try:
+            with open(os.path.join(os.getcwd(), "static", "squat_wireframe.jpg"), "rb") as img_file:
+                img_b64 = base64.b64encode(img_file.read()).decode()
+            img_src = f"data:image/jpeg;base64,{img_b64}"
+        except FileNotFoundError:
+            img_src = ""
+
         st.markdown(
-            """
-            <div class="premium-placeholder">
-                <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 12px;">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.48 12H2"/>
-                    </svg>
-                    <h2 style="margin: 0;">Set your workout plan</h2>
+            f"""
+            <div class="premium-placeholder" style="display: flex; flex-direction: row; align-items: center; gap: 32px; padding: 24px; background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; text-align: left;">
+                <img src="{img_src}" style="width: 180px; height: 180px; border-radius: 12px; object-fit: contain; background: transparent;" />
+                <div>
+                    <h2 style="margin: 0 0 12px 0; font-size: 1.8rem; color: #e2e8f0; font-weight: 600;">Ready to Train?</h2>
+                    <p style="margin: 0; color: #94a3b8; font-size: 1.05rem; line-height: 1.6;">
+                        Choose your exercise and set details on the left. Click <strong>Start</strong> when<br>
+                        you are ready to receive real-time FormAI coaching.
+                    </p>
                 </div>
-                <p>
-                    Choose your exercise, sets, and reps in the sidebar,<br>
-                    then click <strong>Start Workout</strong> to activate the camera and AI coach.
-                </p>
             </div>
             """,
             unsafe_allow_html=True,

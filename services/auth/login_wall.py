@@ -8,14 +8,8 @@ def render_login_wall():
     st.markdown(
         """
         <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 0.5rem; margin-top: 1rem;">
-            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#00d2ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14.4 14.4 9.6 9.6"/>
-                <path d="M18.65 21.35a2 2 0 0 1-2.83 0l-7.17-7.18a2 2 0 0 1 0-2.83l.53-.53"/>
-                <path d="M21.5 18.5a2 2 0 0 1-2.83 0l-3.54-3.54a2 2 0 0 1 0-2.83l.54-.53"/>
-                <path d="M5.35 2.65a2 2 0 0 1 2.83 0l7.17 7.18a2 2 0 0 1 0 2.83l-.53.53"/>
-                <path d="M2.5 5.5a2 2 0 0 1 2.83 0l3.54 3.54a2 2 0 0 1 0 2.83l-.54.53"/>
-            </svg>
-            <h1 style="margin: 0; padding: 0; font-weight: 800; font-size: 2.4rem; letter-spacing: -1px;">AI Real-time GYM Trainer</h1>
+            <svg width="42" height="42" viewBox="0 0 640 512" fill="#00d2ff"><path d="M96 64c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 160 0 64 0 160c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-64-32 0c-17.7 0-32-14.3-32-32l0-64c-17.7 0-32-14.3-32-32s14.3-32 32-32l0-64c0-17.7 14.3-32 32-32l32 0 0-64zm448 0l0 64 32 0c17.7 0 32 14.3 32 32l0 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 64c0 17.7-14.3 32-32 32l-32 0 0 64c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-160 0-64 0-160c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32zM416 224l0 64-192 0 0-64 192 0z"/></svg>
+            <h1 style="margin: 0; padding: 0; font-weight: 800; font-size: 2.4rem; letter-spacing: -1px;">FormAI</h1>
         </div>
         <h3 style='color: #94a3b8; font-weight: 400; margin-bottom: 2rem; margin-top: 0;'>Welcome! Please enter a username to start.</h3>
         """,
