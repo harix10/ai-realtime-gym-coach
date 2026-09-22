@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 import time
 import base64
 from dotenv import load_dotenv
@@ -68,7 +67,11 @@ def main():
                 unsafe_allow_html=True
             )
             if st.button("Logout", key="logout_btn", help="Click to log out of your session"):
-                st.session_state.clear()
+                if "user_id" in st.session_state:
+                    del st.session_state["user_id"]
+                if "username" in st.session_state:
+                    del st.session_state["username"]
+                st.session_state.workout_started = False
                 st.rerun()
 
         st.divider()
