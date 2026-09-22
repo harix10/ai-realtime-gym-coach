@@ -2,6 +2,8 @@
 
 A Streamlit web application that acts as a virtual gym coach, using your webcam to provide real-time feedback on your exercise form, count reps, and track your workout progress.
 
+**Live Demo:** [https://formai-gym-coach.streamlit.app](https://formai-gym-coach.streamlit.app)
+
 ## 🌟 Features
 
 - **Real-time Form Analysis**: Get instant feedback on your exercise technique.
@@ -104,3 +106,16 @@ Make sure you have Python 3.8+ installed.
     ```
 
 4.  Open your web browser and navigate to `http://localhost:8501`.
+
+## 🌐 Deployment (Streamlit Cloud)
+
+This app is deployed on **Streamlit Community Cloud**.
+
+Due to the nature of WebRTC running on cloud environments behind NATs and Firewalls, the following setup is required for the live camera feed to work reliably:
+
+1. **System Dependencies (`packages.txt`)**: 
+   The app requires a `packages.txt` file at the root to install system-level C++ libraries for MediaPipe and OpenCV (e.g., `libgl1`, `libglib2.0-0`, `ffmpeg`, `libsm6`, `libxext6`).
+2. **Pinned Dependencies**: 
+   `mediapipe` is pinned to `==0.10.9` for stability within the Streamlit Debian environment.
+3. **TURN Server**: 
+   For the video stream to connect successfully, the app uses **Twilio's Network Traversal Service** (TURN server) as a fallback to standard Google STUN servers. You must provide your `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` in the Streamlit Cloud Secrets dashboard.
